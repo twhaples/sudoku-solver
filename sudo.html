@@ -1,0 +1,50 @@
+<!DOCTYPE HTML SYSTEM>
+<html>
+ <head>
+  <title>Animated JavaScript Sudoku Solver</title>
+  <script type="text/javascript" src="prototype.js">
+  </script>
+  <link rel="stylesheet" href="sudo.css"/>
+ </head>
+<body>
+<h3><s>Animated</s> Javascript</h3>
+<h1>Sudoku Solver</h1>
+<h3>by <a href="http://fennecfoxen.org">Thomas Whaples</a> <br/>
+   11 December 2006</h3>
+<p>Since the <a href="ajax.html">
+   AJAX =&gt; Perl =&gt; C gateway version</a>
+   was kinda crufty, I rewrote the Sudoku solver
+   in pure JavaScript. It's not as fast as the
+   other version, but it runs entirely in your
+   browser and it's now animated! :)
+</p><p>Interested parties may find the
+    <a href="sudo.js">JavaScript source</a>
+    available under the terms of the GPL.
+</p><p><b>Feb 2011</b> - Improvements in your
+       browser's JavaScript engine over the past
+       five years or so may result in the "pretty 
+       solve" button not actually updating the
+       visual display until the script is done.
+       Sorry. On the balance, this is probably
+       a good thing, though.
+</p>
+<form id="sudo">
+ <noscript><p>(psst- buddy. The animated JavaScript Sudoku solver
+               kind of needs JavaScript to be able to run, dig? k.)
+           </p>
+ </noscript>
+</form>
+<h4>Legend</h4>
+<p>
+<span class="user">8</span> - values you provided <br/>
+<span class="system">8</span> - values we calculated <br/>
+<span class="error">8</span> - impossible value you entered<br/>
+<span><em>fast solve</em></span> - solves the puzzle<br/>
+<span><em>pretty solve</em></span> - solves the puzzle, with animation<br/>
+<span><em>reset</em></span> - clears the solution squares<br/>
+<span><em>clear</em></span> - clears everything<br/>
+</p>
+
+<script type="text/javascript" src="sudo.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE HTML SYSTEM>
+<html>
+ <head>
+  <title>AJAX Sudoku Solver</title>
+  <script type="text/javascript" src="prototype.js">
+  </script>
+  <link href="sudo.css" rel="stylesheet"/>
+</head>
+<body>
+<h1>Sudoku Solver</h1>
+<h3>30 November 2006</h3>
+<p>
+ This is an AJAX interface to a Perl script CGI interface
+ to a modified C program I wrote for class at one point.
+ (The Perl script is there for some boring CGI overhead.)
+ It solves Sudoku problems quickly. (Very quickly.)
+ If there are multiple solutions, it will only find one.
+</p>
+<p>The <a href="src/">source code</a> for the server-side
+   components is available.</p>
+<form id="sudo">
+</form>
+<p>
+<span class="user">8</span> - values you provided <br/>
+<span class="system">8</span> - values we calculated <br/>
+<span class="error">8</span> - impossible value you entered<br/>
+<span><em>solve</em></span> - solves the puzzle<br/>
+<span><em>reset</em></span> - clears the solution squares<br/>
+<span><em>clear</em></span> - clears everything<br/>
+</p>
+
+<script type="text/javascript"><!--
+/*
+        Copyright 2006 Thomas Whaples
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+*/
+
+
+s = $("sudo");
+var url="sudoku.pl";
+
+s.fix = function(inp){
+	  v = parseInt(inp.value);
+	  if(v){
+		  return (inp.value = v);
+	  } else {
+		  inp.value = "";
+		  return ".";
+	  }
+}
+s.readstring = function(){
+	str = "";
+	for(var x = 0; x < this.cells.length; x++)
+		str += this.fix(this.cells[x]);
+	return str;
+}
+
+
+
+var t = document.createElement("table");
+t.align = "center";
+var tb = document.createElement("tbody");
+t.appendChild(tb);
+
+s.cells = Array();
+for(var r = 0; r < 9; r++){
+	var row = document.createElement("tr");
+	for(var c = 0; c < 9; c++){
+		var cell = document.createElement("td");
+		var inp = document.createElement("input");
+		inp.size = inp.maxLength = 1;
+		inp.onfocus = function() { this.className = ""; this.select(); }
+		
+		rm = (r == 3 || r == 4 || r == 5);
+		cm = (c == 3 || c == 4 || c == 5);
+		if((rm && !cm) || (cm && !rm)){
+			cell.className = "stripeA";
+			// for the 3x3 squares
+		} else {
+			cell.className = "stripeB";
+		}
+		cell.appendChild(inp);
+		row.appendChild(cell);
+		s.cells[s.cells.length] = inp;
+	}
+	tb.appendChild(row);
+}
+
+
+
+re = document.createElement("input");
+cl = document.createElement("input");
+ch = document.createElement("input");
+
+re.type = ch.type = cl.type = "button";
+ch.value = "solve";
+re.value = "reset";
+cl.value = "clear";
+
+ch.onclick = function () {
+	var pars = "board=" + s.readstring();
+	for(var cell = 0; cell < 81; cell++){
+		var sc = s.cells[cell];
+		if(sc.value && sc.className != "system"){
+			sc.className = "user";
+		}
+	}
+	var myAjax = new Ajax.Request(url, 
+		{ method: 'get', parameters: pars, onComplete: showAnswer }
+		); 
+}
+
+cl.onclick = function() {
+	for(var cell = 0; cell < 81; cell++){
+		var sc = s.cells[cell];
+		sc.value = sc.className = "";
+	}
+}
+re.onclick = function() {
+	for(var cell = 0; cell < 81; cell++){
+        var sc = s.cells[cell];
+		if(sc.className == "system")
+			sc.className = sc.value = "";
+		}
+	}
+function showAnswer(aj,ob){
+	var res = aj.responseText;
+	var c = parseInt(res);
+	if(c < 81){
+		if(c >= 0)
+			s.cells[c].className="error";
+		else
+			alert("Weird error: " + res);
+	} else {
+		for(c = 0; c < 81; c++){
+			sc = s.cells[c];
+			sc.value = res.substring(c,c+1);
+			if(!sc.className){
+				sc.className = "system";
+			}
+		}
+	}
+}
+
+var handlers = {
+	onCreate: function(){
+		ch.disabled = true;
+	},
+	onComplete: function() {
+		if(Ajax.activeRequestCount == 0){
+			ch.disabled = false;
+		}
+	}
+};
+
+Ajax.Responders.register(handlers);
+
+// s.innerHTML = "" + t.outerHTML + ch.outerHTML + re.outerHTML + cl.outerHTML;
+
+s.appendChild(t);
+s.appendChild(ch);
+s.appendChild(re);
+s.appendChild(cl);
+
+
+// -->
+</script>
+</body>
+</html>
