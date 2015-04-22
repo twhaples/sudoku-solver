@@ -4,7 +4,7 @@
  */
 
 #ifndef __SDK_H
-#define __SDH_H
+#define __SDK_H
 /* Some useful constants and macros. */
 
 /* Given a square ID, which cells are in it? */
