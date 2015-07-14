@@ -21,7 +21,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include "sudoku.h"
-#define CGI 1
 
 static int board[81];			/* This points to our gameboard. */
 static int cellstrikes[81][10];	/* This tells us which numbers won't work where. */
